@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>华语R&B猜歌王</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #4a1942 50%, #1a1a2e 100%);
+      min-height: 100vh;
+      color: white;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 15px;
+      min-height: 100vh;
+    }
+    
+    .hidden { display: none !important; }
+    
+    /* 通用按钮样式 */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    
+    .btn:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+    }
+    
+    .btn-warning {
+      background: linear-gradient(135deg, #eab308 0%, #f97316 100%);
+    }
+    
+    .btn-gray {
+      background: #374151;
+    }
+    
+    .btn-small {
+      padding: 10px 15px;
+      font-size: 14px;
+    }
+    
+    /* 主菜单 */
+    #menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .logo {
+      font-size: 60px;
+      margin-bottom: 15px;
+    }
+    
+    .title {
+      font-size: 28px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #fbbf24, #ec4899, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      color: #9ca3af;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .artists {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    
+    .artist {
+      text-align: center;
+    }
+    
+    .artist-emoji {
+      font-size: 28px;
+    }
+    
+    .artist-name {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    
+    .menu-buttons {
+      width: 100%;
+      max-width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .dev-credit {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #4b5563;
+      border-top: 1px solid #374151;
+      padding-top: 15px;
+    }
+    
+    /* 难度选择 */
+    .difficulty-card {
+      background: linear-gradient(135deg, var(--color-from), var(--color-to));
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .difficulty-card:active {
+      transform: scale(0.98);
+    }
+    
+    .difficulty-icon {
+      font-size: 45px;
+    }
+    
+    .difficulty-info h3 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+    
+    .difficulty-info p {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+    
+    /* 模式选择 */
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .mode-card {
+      background: rgba(55, 65, 81, 0.7);
+      border-radius: 16px;
+      padding: 20px 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .mode-card:active {
+      background: rgba(75, 85, 101, 0.8);
+      transform: scale(0.98);
+    }
+    
+    .mode-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    
+    .mode-name {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    
+    .mode-desc {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    
+    /* 游戏界面 */
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .game-stats {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .stat-badge {
+      background: #1f2937;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+    
+    .stat-badge.score { background: #ca8a04; }
+    .stat-badge.streak { background: #ea580c; animation: pulse 1s infinite; }
+    .stat-badge.player1 { background: #db2777; }
+    .stat-badge.player2 { background: #2563eb; }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    
+    .timer {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .timer.warning {
+      color: #ef4444;
+      animation: pulse 0.5s infinite;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #374151;
+      border-radius: 3px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ec4899, #8b5cf6);
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+    
+    .mode-badge {
+      display: inline-block;
+      background: rgba(139, 92, 246, 0.5);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+    
+    .question-box {
+      background: rgba(31, 41, 55, 0.5);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .question-label {
+      color: #9ca3af;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+    
+    .question-content {
+      font-size: 20px;
+      line-height: 1.6;
+    }
+    
+    .question-emoji {
+      font-size: 50px;
+      letter-spacing: 10px;
+    }
+    
+    .fill-input-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .fill-input {
+      flex: 1;
+      padding: 12px 15px;
+      background: #374151;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+    }
+    
+    .fill-input:focus {
+      outline: 2px solid #fbbf24;
+    }
+    
+    .hint-btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 10px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+    
+    .hint-btn:disabled {
+      background: #374151;
+      color: #6b7280;
+    }
+    
+    .hint-text {
+      color: #9ca3af;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .options-grid.six-options {
+      grid-template-columns: 1fr 1fr;
+    }
+    
+    .option-btn {
+      background: #1f2937;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: white;
+    }
+    
+    .option-btn:active {
+      background: #374151;
+      transform: scale(0.98);
+    }
+    
+    .option-btn.correct {
+      background: #16a34a;
+      box-shadow: 0 0 0 2px #4ade80;
+    }
+    
+    .option-btn.wrong {
+      background: #dc2626;
+      box-shadow: 0 0 0 2px #f87171;
+    }
+    
+    .option-btn.dimmed {
+      opacity: 0.5;
+    }
+    
+    .option-title {
+      font-weight: bold;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+    
+    .option-artist {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    
+    .answer-result {
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .answer-result.correct { background: rgba(22, 163, 74, 0.3); }
+    .answer-result.wrong { background: rgba(220, 38, 38, 0.3); }
+    
+    .answer-text {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-top: 8px;
+    }
+    
+    .answer-song {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 5px;
+      margin-left: 5px;
+    }
+    
+    /* 多人比分 */
+    .multi-scores {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    
+    .multi-score {
+      padding: 8px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 14px;
+    }
+    
+    .multi-score.p1 { background: rgba(219, 39, 119, 0.3); }
+    .multi-score.p2 { background: rgba(37, 99, 235, 0.3); }
+    .multi-score.active { box-shadow: 0 0 0 2px white; }
+    
+    /* 玩家切换 */
+    .player-switch {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .player-switch-icon {
+      font-size: 60px;
+      margin-bottom: 15px;
+    }
+    
+    .player-switch h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .switch-scores {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .switch-score {
+      padding: 15px;
+      border-radius: 12px;
+      background: rgba(31, 41, 55, 0.5);
+    }
+    
+    .switch-score.p1 { color: #f472b6; }
+    .switch-score.p2 { color: #60a5fa; }
+    
+    .switch-score .name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .switch-score .points {
+      font-size: 28px;
+      font-weight: bold;
+    }
+    
+    /* 结果页 */
+    .result-page {
+      text-align: center;
+      padding: 30px 15px;
+    }
+    
+    .result-icon {
+      font-size: 70px;
+      margin-bottom: 15px;
+    }
+    
+    .result-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    
+    .result-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .result-stat {
+      background: rgba(31, 41, 55, 0.5);
+      border-radius: 12px;
+      padding: 15px;
+    }
+    
+    .result-stat .value {
+      font-size: 28px;
+      font-weight: bold;
+    }
+    
+    .result-stat .value.gold { color: #fbbf24; }
+    .result-stat .value.green { color: #4ade80; }
+    .result-stat .value.orange { color: #fb923c; }
+    .result-stat .value.blue { color: #60a5fa; }
+    
+    .result-stat .label {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-top: 5px;
+    }
+    
+    /* 多人结果 */
+    .multi-result {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .multi-result-card {
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .multi-result-card.winner {
+      box-shadow: 0 0 0 2px #fbbf24;
+    }
+    
+    .multi-result-card.p1 { background: rgba(219, 39, 119, 0.2); }
+    .multi-result-card.p2 { background: rgba(37, 99, 235, 0.2); }
+    
+    .multi-result-card .medal {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+    
+    .multi-result-card .name {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    
+    .multi-result-card .score {
+      font-size: 32px;
+      font-weight: bold;
+      color: #fbbf24;
+    }
+    
+    .multi-result-card .correct-count {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-top: 5px;
+    }
+    
+    /* 排行榜输入 */
+    .leaderboard-input {
+      background: rgba(55, 65, 81, 0.7);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .leaderboard-input p {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+    
+    .leaderboard-input-group {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .leaderboard-input input {
+      flex: 1;
+      padding: 10px 15px;
+      background: #374151;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+    }
+    
+    .leaderboard-input input:focus {
+      outline: 2px solid #fbbf24;
+    }
+    
+    /* 排行榜页面 */
+    .leaderboard {
+      padding: 20px 0;
+    }
+    
+    .leaderboard h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .leaderboard-empty {
+      text-align: center;
+      padding: 40px;
+      background: rgba(31, 41, 55, 0.5);
+      border-radius: 16px;
+    }
+    
+    .leaderboard-empty .icon {
+      font-size: 50px;
+      margin-bottom: 15px;
+    }
+    
+    .leaderboard-list {
+      background: rgba(31, 41, 55, 0.5);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    
+    .leaderboard-header {
+      display: grid;
+      grid-template-columns: 40px 1fr 70px 70px;
+      padding: 12px 15px;
+      background: rgba(55, 65, 81, 0.5);
+      font-size: 13px;
+      font-weight: bold;
+    }
+    
+    .leaderboard-item {
+      display: grid;
+      grid-template-columns: 40px 1fr 70px 70px;
+      padding: 12px 15px;
+      border-top: 1px solid #374151;
+      font-size: 14px;
+      align-items: center;
+    }
+    
+    .leaderboard-item.top3 {
+      background: rgba(251, 191, 36, 0.1);
+    }
+    
+    .leaderboard-item .rank { text-align: center; }
+    .leaderboard-item .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .leaderboard-item .score { text-align: right; color: #fbbf24; font-weight: bold; }
+    .leaderboard-item .date { text-align: right; color: #6b7280; font-size: 12px; }
+    
+    /* 答题记录 */
+    .answer-history {
+      background: rgba(31, 41, 55, 0.3);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .answer-history h3 {
+      text-align: center;
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+    
+    .answer-history-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #374151;
+      font-size: 14px;
+    }
+    
+    .answer-history-item:last-child {
+      border-bottom: none;
+    }
+    
+    .answer-history-item.correct { color: #4ade80; }
+    .answer-history-item.wrong { color: #f87171; }
+    
+    .answer-history-item .song-info {
+      color: white;
+    }
+    
+    .answer-history-item .artist {
+      color: #6b7280;
+      font-size: 12px;
+    }
+    
+    .result-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .result-buttons .row {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .result-buttons .row .btn {
+      flex: 1;
+    }
+    
+    /* 多人设置 */
+    .multi-setup {
+      padding: 20px 0;
+    }
+    
+    .multi-setup h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .setup-form {
+      background: rgba(31, 41, 55, 0.5);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      background: #374151;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+    }
+    
+    .form-group input:focus {
+      outline: 2px solid #ec4899;
+    }
+    
+    .rules-box {
+      background: rgba(17, 24, 39, 0.5);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 15px;
+    }
+    
+    .rules-box p {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    
+    .rules-box ul {
+      font-size: 12px;
+      color: #9ca3af;
+      padding-left: 20px;
+    }
+    
+    .rules-box li {
+      margin-bottom: 4px;
+    }
+    
+    .difficulty-select {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .diff-btn {
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: white;
+      background: #374151;
+    }
+    
+    .diff-btn.active {
+      box-shadow: 0 0 0 2px white;
+    }
+    
+    .diff-btn.normal.active {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+    }
+    
+    .diff-btn.hard.active {
+      background: linear-gradient(135deg, #ef4444, #f43f5e);
+    }
+    
+    /* 页面标题 */
+    .page-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    
+    .page-subtitle {
+      text-align: center;
+      color: #9ca3af;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 主菜单 -->
+    <div id="menu">
+      <div class="logo">🎵</div>
+      <h1 class="title">华语R&B猜歌王</h1>
+      <p class="subtitle">周杰伦 · 王力宏 · 陶喆 · 林俊杰 · 方大同</p>
+      
+      <div class="artists">
+        <div class="artist"><div class="artist-emoji">🎹</div><div class="artist-name">周杰伦</div></div>
+        <div class="artist"><div class="artist-emoji">🎸</div><div class="artist-name">王力宏</div></div>
+        <div class="artist"><div class="artist-emoji">🎷</div><div class="artist-name">陶喆</div></div>
+        <div class="artist"><div class="artist-emoji">🎤</div><div class="artist-name">林俊杰</div></div>
+        <div class="artist"><div class="artist-emoji">🎺</div><div class="artist-name">方大同</div></div>
+      </div>
+      
+      <div class="menu-buttons">
+        <button class="btn btn-primary" onclick="showDifficultySelect()">🎮 单人模式</button>
+        <button class="btn btn-secondary" onclick="showMultiSetup()">👥 双人对战</button>
+        <button class="btn btn-warning" onclick="showLeaderboard()">🏆 排行榜</button>
+      </div>
+      
+      <p class="dev-credit">开发者：章俊杰 💻</p>
+    </div>
+    
+    <!-- 难度选择 -->
+    <div id="difficultySelect" class="hidden">
+      <h2 class="page-title">选择难度</h2>
+      
+      <div class="difficulty-card" style="--color-from: #22c55e; --color-to: #10b981;" onclick="selectDifficulty('normal')">
+        <div class="difficulty-icon">😊</div>
+        <div class="difficulty-info">
+          <h3>普通模式</h3>
+          <p>15秒答题 · 4个选项 · 可用提示</p>
+        </div>
+      </div>
+      
+      <div class="difficulty-card" style="--color-from: #ef4444; --color-to: #f43f5e;" onclick="selectDifficulty('hard')">
+        <div class="difficulty-icon">😈</div>
+        <div class="difficulty-info">
+          <h3>困难模式</h3>
+          <p>8秒答题 · 6个选项 · 更多难题</p>
+        </div>
+      </div>
+      
+      <button class="btn btn-gray" onclick="showMenu()">返回主菜单</button>
+    </div>
+    
+    <!-- 模式选择 -->
+    <div id="modeSelect" class="hidden">
+      <h2 class="page-title">选择游戏模式</h2>
+      <p class="page-subtitle" id="modeSubtitle"></p>
+      
+      <div class="mode-grid">
+        <div class="mode-card" onclick="startGame('LYRICS')">
+          <div class="mode-icon">🎵</div>
+          <div class="mode-name">歌词猜歌</div>
+          <div class="mode-desc">看歌词猜歌名</div>
+        </div>
+        <div class="mode-card" onclick="startGame('EMOJI')">
+          <div class="mode-icon">😎</div>
+          <div class="mode-name">表情猜歌</div>
+          <div class="mode-desc">看emoji猜歌名</div>
+        </div>
+        <div class="mode-card" onclick="startGame('HINT')">
+          <div class="mode-icon">💡</div>
+          <div class="mode-name">线索猜歌</div>
+          <div class="mode-desc">根据提示猜歌名</div>
+        </div>
+        <div class="mode-card" onclick="startGame('FILL')">
+          <div class="mode-icon">✏️</div>
+          <div class="mode-name">歌词填空</div>
+          <div class="mode-desc">填写缺失歌词</div>
+        </div>
+      </div>
+      
+      <button class="btn btn-gray" onclick="goBackFromMode()">返回</button>
+    </div>
+    
+    <!-- 多人设置 -->
+    <div id="multiSetup" class="hidden multi-setup">
+      <h2>👥 双人对战设置</h2>
+      
+      <div class="setup-form">
+        <div class="form-group">
+          <label>玩家1 名称</label>
+          <input type="text" id="player1Input" placeholder="玩家1" maxlength="8">
+        </div>
+        <div class="form-group">
+          <label>玩家2 名称</label>
+          <input type="text" id="player2Input" placeholder="玩家2" maxlength="8">
+        </div>
+        
+        <div class="rules-box">
+          <p>🎯 对战规则：</p>
+          <ul>
+            <li>两位玩家轮流回答相同的题目</li>
+            <li>每题两人都答完后进入下一题</li>
+            <li>共10道题，最后比较总分</li>
+          </ul>
+        </div>
+      </div>
+      
+      <p class="page-subtitle">选择难度</p>
+      <div class="difficulty-select">
+        <button class="diff-btn normal active" id="multiDiffNormal" onclick="setMultiDifficulty('normal')">😊 普通</button>
+        <button class="diff-btn hard" id="multiDiffHard" onclick="setMultiDifficulty('hard')">😈 困难</button>
+      </div>
+      
+      <button class="btn btn-secondary" onclick="showModeSelectMulti()">开始对战 ⚔️</button>
+      <button class="btn btn-gray" style="margin-top: 10px;" onclick="showMenu()">返回主菜单</button>
+    </div>
+    
+    <!-- 游戏界面 -->
+    <div id="gameScreen" class="hidden">
+      <div class="game-header">
+        <div class="game-stats">
+          <span class="stat-badge" id="questionNum">1/10</span>
+          <span class="stat-badge score" id="scoreDisplay">⭐ 0</span>
+          <span class="stat-badge streak hidden" id="streakDisplay">🔥 0连击</span>
+          <span class="stat-badge player1 hidden" id="currentPlayerBadge"></span>
+        </div>
+        <div class="timer" id="timerDisplay">⏱️ 15s</div>
+      </div>
+      
+      <div class="multi-scores hidden" id="multiScores">
+        <div class="multi-score p1" id="p1Score"></div>
+        <div class="multi-score p2" id="p2Score"></div>
+      </div>
+      
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      
+      <div style="text-align: center;">
+        <span class="mode-badge" id="modeBadge"></span>
+      </div>
+      
+      <div class="question-box">
+        <div class="question-label" id="questionLabel"></div>
+        <div class="question-content" id="questionContent"></div>
+        <div class="fill-input-group hidden" id="fillInputGroup">
+          <input type="text" class="fill-input" id="fillInput" placeholder="输入答案...">
+          <button class="btn btn-warning btn-small" onclick="submitFillAnswer()">确认</button>
+        </div>
+      </div>
+      
+      <div style="text-align: center;">
+        <button class="hint-btn" id="hintBtn" onclick="useHint()">💡 使用提示 (-25分)</button>
+        <div class="hint-text hidden" id="hintText"></div>
+      </div>
+      
+      <div class="options-grid" id="optionsGrid"></div>
+      
+      <div class="answer-result hidden" id="answerResult">
+        <div id="answerResultText"></div>
+        <div class="answer-text" id="correctAnswerText"></div>
+      </div>
+      
+      <button class="btn btn-primary hidden" id="nextBtn" onclick="nextQuestion()">下一题 →</button>
+    </div>
+    
+    <!-- 玩家切换 -->
+    <div id="playerSwitch" class="hidden player-switch">
+      <div class="player-switch-icon" id="switchIcon">🎮</div>
+      <h2 id="switchTitle">轮到 玩家1</h2>
+      
+      <div class="switch-scores">
+        <div class="switch-score p1">
+          <div class="name" id="switchP1Name">玩家1</div>
+          <div class="points" id="switchP1Score">0</div>
+        </div>
+        <div class="switch-score p2">
+          <div class="name" id="switchP2Name">玩家2</div>
+          <div class="points" id="switchP2Score">0</div>
+        </div>
+      </div>
+      
+      <p style="color: #9ca3af; margin-bottom: 20px;" id="switchQuestionNum">第 1/10 题</p>
+      
+      <button class="btn btn-success" onclick="continueGame()">准备好了！</button>
+    </div>
+    
+    <!-- 结果页面 -->
+    <div id="resultScreen" class="hidden result-page">
+      <div class="result-icon" id="resultIcon">🏆</div>
+      <h2 class="result-title" id="resultTitle">游戏结束</h2>
+      
+      <!-- 单人结果 -->
+      <div id="singleResult">
+        <div class="result-stats">
+          <div class="result-stat">
+            <div class="value gold" id="finalScore">0</div>
+            <div class="label">总得分</div>
+          </div>
+          <div class="result-stat">
+            <div class="value green" id="accuracy">0%</div>
+            <div class="label">正确率</div>
+          </div>
+          <div class="result-stat">
+            <div class="value orange" id="maxStreak">0</div>
+            <div class="label">最高连击</div>
+          </div>
+          <div class="result-stat">
+            <div class="value blue" id="totalTime">0s</div>
+            <div class="label">用时</div>
+          </div>
+        </div>
+        
+        <div class="leaderboard-input" id="leaderboardInput">
+          <p>输入名字上排行榜</p>
+          <div class="leaderboard-input-group">
+            <input type="text" id="nameInput" placeholder="你的名字..." maxlength="8">
+            <button class="btn btn-warning btn-small" onclick="submitScore()">提交</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 多人结果 -->
+      <div id="multiResult" class="hidden">
+        <div class="multi-result">
+          <div class="multi-result-card p1" id="multiP1Card">
+            <div class="medal" id="multiP1Medal">🥇</div>
+            <div class="name" id="multiP1Name">玩家1</div>
+            <div class="score" id="multiP1Score">0</div>
+            <div class="correct-count" id="multiP1Correct">0/0 正确</div>
+          </div>
+          <div class="multi-result-card p2" id="multiP2Card">
+            <div class="medal" id="multiP2Medal">🥈</div>
+            <div class="name" id="multiP2Name">玩家2</div>
+            <div class="score" id="multiP2Score">0</div>
+            <div class="correct-count" id="multiP2Correct">0/0 正确</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="answer-history" id="answerHistory">
+        <h3>📝 答题记录</h3>
+        <div id="historyList"></div>
+      </div>
+      
+      <div class="result-buttons">
+        <div class="row">
+          <button class="btn btn-primary" onclick="playAgain()">再来一局 🔄</button>
+          <button class="btn btn-gray" onclick="changeMode()">换个模式 🎯</button>
+        </div>
+        <button class="btn btn-gray" onclick="showMenu()">返回主菜单</button>
+      </div>
+      
+      <p class="dev-credit">开发者：章俊杰 💻</p>
+    </div>
+    
+    <!-- 排行榜 -->
+    <div id="leaderboardScreen" class="hidden leaderboard">
+      <h2>🏆 排行榜</h2>
+      
+      <div class="leaderboard-empty" id="leaderboardEmpty">
+        <div class="icon">📝</div>
+        <p style="color: #9ca3af;">暂无记录</p>
+        <p style="font-size: 12px; color: #6b7280; margin-top: 8px;">完成游戏后可以上榜哦！</p>
+      </div>
+      
+      <div class="leaderboard-list hidden" id="leaderboardList">
+        <div class="leaderboard-header">
+          <div>#</div>
+          <div>玩家</div>
+          <div style="text-align: right;">分数</div>
+          <div style="text-align: right;">日期</div>
+        </div>
+        <div id="leaderboardItems"></div>
+      </div>
+      
+      <button class="btn btn-gray" style="margin-top: 20px;" onclick="showMenu()">返回主菜单</button>
+    </div>
+  </div>
+
+  <script>
+    // ==================== 歌曲数据库 ====================
+    const songDatabase = [
+      // 周杰伦
+      { id: 1, title: "晴天", artist: "周杰伦", lyrics: "故事的小黄花，从出生那年就飘着", hint: "关于初恋和回忆的经典情歌", emoji: "☀️🌸💛", fillBlank: "故事的小___，从出生那年就飘着", answer: "黄花", difficulty: "normal" },
+      { id: 2, title: "稻香", artist: "周杰伦", lyrics: "对这个世界如果你有太多的抱怨，跌倒了就不敢继续往前走", hint: "鼓励人们回归简单快乐的田园风歌曲", emoji: "🌾🏠👨‍🌾", fillBlank: "跌倒了就不敢继续往前___", answer: "走", difficulty: "normal" },
+      { id: 3, title: "七里香", artist: "周杰伦", lyrics: "窗外的麻雀在电线杆上多嘴，你说这一句很有夏天的感觉", hint: "以一种花命名的夏日恋曲", emoji: "🌺🐦⚡", fillBlank: "窗外的___在电线杆上多嘴", answer: "麻雀", difficulty: "normal" },
+      { id: 4, title: "青花瓷", artist: "周杰伦", lyrics: "天青色等烟雨，而我在等你", hint: "中国风代表作，歌名是一种瓷器", emoji: "🏺💙🎨", fillBlank: "天青色等___，而我在等你", answer: "烟雨", difficulty: "normal" },
+      { id: 5, title: "夜曲", artist: "周杰伦", lyrics: "一群嗜血的蚂蚁，被腐肉所吸引", hint: "暗黑风格的钢琴曲风情歌", emoji: "🌙🎹🖤", fillBlank: "一群嗜血的___，被腐肉所吸引", answer: "蚂蚁", difficulty: "hard" },
+      { id: 6, title: "简单爱", artist: "周杰伦", lyrics: "说不上为什么，我变得很主动", hint: "早期甜蜜情歌，歌名两个字形容爱情", emoji: "💕😊✨", fillBlank: "说不上为什么，我变得很___", answer: "主动", difficulty: "normal" },
+      { id: 7, title: "告白气球", artist: "周杰伦", lyrics: "塞纳河畔左岸的咖啡，我手一杯品尝你的美", hint: "浪漫法式风情的告白歌曲", emoji: "🎈💝🗼", fillBlank: "塞纳河畔左岸的___", answer: "咖啡", difficulty: "normal" },
+      { id: 8, title: "双截棍", artist: "周杰伦", lyrics: "快使用双截棍，哼哼哈兮", hint: "融合中国功夫元素的嘻哈歌曲", emoji: "🥋💪🔥", fillBlank: "快使用双截棍，___哈兮", answer: "哼哼", difficulty: "normal" },
+      { id: 9, title: "龙卷风", artist: "周杰伦", lyrics: "爱情来的太快就像龙卷风", hint: "用自然灾害比喻爱情的速度", emoji: "🌪️❤️💨", fillBlank: "爱情来的太快就像___", answer: "龙卷风", difficulty: "normal" },
+      { id: 10, title: "安静", artist: "周杰伦", lyrics: "只剩下钢琴陪我谈了一天", hint: "失恋后独自疗伤的慢歌", emoji: "🤫🎹😢", fillBlank: "只剩下钢琴陪我谈了一___", answer: "天", difficulty: "hard" },
+      { id: 11, title: "以父之名", artist: "周杰伦", lyrics: "低头亲吻我的左手，换取被宽恕的承诺", hint: "黑暗宗教风格的史诗级作品", emoji: "✝️🖤🎭", fillBlank: "低头亲吻我的___手", answer: "左", difficulty: "hard" },
+      { id: 12, title: "发如雪", artist: "周杰伦", lyrics: "你发如雪凄美了离别，我焚香感动了谁", hint: "中国风悲情歌曲，形容头发的颜色", emoji: "❄️💇‍♀️😭", fillBlank: "你发如雪凄美了___", answer: "离别", difficulty: "hard" },
+      
+      // 王力宏
+      { id: 13, title: "你不知道的事", artist: "王力宏", lyrics: "蝴蝶眨几次眼睛，才学会飞行", hint: "电影《恋爱通告》主题曲", emoji: "🦋👀❤️", fillBlank: "蝴蝶眨几次眼睛，才学会___", answer: "飞行", difficulty: "normal" },
+      { id: 14, title: "唯一", artist: "王力宏", lyrics: "你是我的唯一，两个世界都变形", hint: "经典深情慢歌，歌名表示独一无二", emoji: "1️⃣💖🌍", fillBlank: "你是我的唯一，两个世界都___", answer: "变形", difficulty: "normal" },
+      { id: 15, title: "大城小爱", artist: "王力宏", lyrics: "城里的月光把梦照亮，请温暖他心房", hint: "关于都市爱情的温暖歌曲", emoji: "🏙️🌙💑", fillBlank: "城里的月光把梦___", answer: "照亮", difficulty: "normal" },
+      { id: 16, title: "落叶归根", artist: "王力宏", lyrics: "我向你飞，多远都不累", hint: "关于思乡和归属感的歌", emoji: "🍂🌳🏠", fillBlank: "我向你飞，多远都不___", answer: "累", difficulty: "normal" },
+      { id: 17, title: "心跳", artist: "王力宏", lyrics: "心跳触动着星球的脉搏", hint: "节奏感强烈，歌名是身体的律动", emoji: "💓🌟🌍", fillBlank: "心跳触动着星球的___", answer: "脉搏", difficulty: "hard" },
+      { id: 18, title: "花田错", artist: "王力宏", lyrics: "花田里犯了错，说好破晓前忘掉", hint: "中国风歌曲，在花田里发生的故事", emoji: "🌸🌾😢", fillBlank: "花田里犯了错，说好___前忘掉", answer: "破晓", difficulty: "hard" },
+      { id: 19, title: "盖世英雄", artist: "王力宏", lyrics: "让我们一起摇摆，一起嗨", hint: "同名专辑主打歌，很嗨的舞曲", emoji: "🦸‍♂️💫🎤", fillBlank: "让我们一起___，一起嗨", answer: "摇摆", difficulty: "normal" },
+      { id: 20, title: "改变自己", artist: "王力宏", lyrics: "我可以改变世界，改变自己", hint: "励志歌曲，鼓励自我改变", emoji: "🔄💪🌍", fillBlank: "我可以改变世界，改变___", answer: "自己", difficulty: "normal" },
+      { id: 21, title: "龙的传人", artist: "王力宏", lyrics: "古老的东方有一条龙，它的名字就叫中国", hint: "经典爱国歌曲的现代版", emoji: "🐉🇨🇳🔥", fillBlank: "古老的东方有一条___", answer: "龙", difficulty: "normal" },
+      
+      // 陶喆
+      { id: 22, title: "普通朋友", artist: "陶喆", lyrics: "朋友我当你是朋友，你却当我是普通朋友", hint: "关于友情以上恋人未满的尴尬关系", emoji: "👫❓💔", fillBlank: "你却当我是___朋友", answer: "普通", difficulty: "normal" },
+      { id: 23, title: "爱很简单", artist: "陶喆", lyrics: "我想大声宣布对你依依不舍", hint: "R&B经典情歌，歌名说爱情其实不复杂", emoji: "❤️✨😌", fillBlank: "我想大声宣布对你___", answer: "依依不舍", difficulty: "normal" },
+      { id: 24, title: "流沙", artist: "陶喆", lyrics: "我慢慢的把你放下，像流沙", hint: "失恋的感觉像某种会流动的沙", emoji: "⏳💨😞", fillBlank: "我慢慢的把你___，像流沙", answer: "放下", difficulty: "normal" },
+      { id: 25, title: "Susan说", artist: "陶喆", lyrics: "Susan说她不爱你，Susan说", hint: "歌名是一个英文女生名字", emoji: "👩💬🚫", fillBlank: "___说她不爱你", answer: "Susan", difficulty: "normal" },
+      { id: 26, title: "找自己", artist: "陶喆", lyrics: "我到底是谁，能不能开着飞机去追", hint: "关于自我探索的歌曲", emoji: "🔍👤✈️", fillBlank: "能不能开着___去追", answer: "飞机", difficulty: "hard" },
+      { id: 27, title: "黑色柳丁", artist: "陶喆", lyrics: "黑色柳丁，我看我自己", hint: "同名专辑，一种黑色的水果", emoji: "🍊⬛👁️", fillBlank: "黑色柳丁，我看我___", answer: "自己", difficulty: "hard" },
+      { id: 28, title: "天天", artist: "陶喆", lyrics: "天天想你，天天问自己", hint: "每一天都在想念，歌名重复一个字", emoji: "📅💭❤️", fillBlank: "天天想你，天天问___", answer: "自己", difficulty: "normal" },
+      
+      // 林俊杰
+      { id: 29, title: "江南", artist: "林俊杰", lyrics: "风到这里就是粘，粘住过客的思念", hint: "以中国南方地区命名的经典歌曲", emoji: "🌊🏯💨", fillBlank: "粘住过客的___", answer: "思念", difficulty: "normal" },
+      { id: 30, title: "她说", artist: "林俊杰", lyrics: "她说无所谓，只要能在夜里翻来覆去的时候有寄托", hint: "孙燕姿作词，歌名两个字", emoji: "👩💬😢", fillBlank: "她说___", answer: "无所谓", difficulty: "hard" },
+      { id: 31, title: "修炼爱情", artist: "林俊杰", lyrics: "修炼爱情的心酸，学会放好以前的渴望", hint: "把爱情比作需要练习的功课", emoji: "⚔️❤️📚", fillBlank: "学会放好以前的___", answer: "渴望", difficulty: "normal" },
+      { id: 32, title: "可惜没如果", artist: "林俊杰", lyrics: "假如把犯得起的错，能错的都错过", hint: "感叹人生没有如果的遗憾情歌", emoji: "😔💭❌", fillBlank: "能错的都___", answer: "错过", difficulty: "normal" },
+      { id: 33, title: "小酒窝", artist: "林俊杰", lyrics: "小酒窝长睫毛，是你最美的记号", hint: "和蔡卓妍合唱，唱脸上的一个特征", emoji: "😊👁️💕", fillBlank: "是你最美的___", answer: "记号", difficulty: "normal" },
+      { id: 34, title: "一千年以后", artist: "林俊杰", lyrics: "一千年以后，世界早已没有我", hint: "穿越漫长时光的爱情承诺", emoji: "⏰🌍💔", fillBlank: "世界早已没有___", answer: "我", difficulty: "normal" },
+      { id: 35, title: "曹操", artist: "林俊杰", lyrics: "不是英雄不读三国", hint: "以三国人物命名的歌", emoji: "🐴⚔️📖", fillBlank: "不是___不读三国", answer: "英雄", difficulty: "normal" },
+      { id: 36, title: "背对背拥抱", artist: "林俊杰", lyrics: "背对背拥抱，滑落肩头难过都不讲", hint: "一种特殊的拥抱方式", emoji: "🔙🤗💔", fillBlank: "滑落肩头难过都不___", answer: "讲", difficulty: "normal" },
+      { id: 37, title: "醉赤壁", artist: "林俊杰", lyrics: "确认过眼神，我遇上对的人", hint: "三国主题，战场在赤壁", emoji: "🍷🔥⚔️", fillBlank: "我遇上对的___", answer: "人", difficulty: "hard" },
+      { id: 38, title: "学不会", artist: "林俊杰", lyrics: "怎么学都学不会，如何舍弃", hint: "关于放不下的无奈", emoji: "📚❌😢", fillBlank: "怎么学都学不会，如何___", answer: "舍弃", difficulty: "hard" },
+      
+      // 方大同
+      { id: 39, title: "爱爱爱", artist: "方大同", lyrics: "爱爱爱，爱到要吐", hint: "歌名是同一个字重复三次", emoji: "❤️❤️❤️🤢", fillBlank: "爱爱爱，爱到要___", answer: "吐", difficulty: "normal" },
+      { id: 40, title: "三人游", artist: "方大同", lyrics: "你爱的是他，他爱的是你，我在中间", hint: "关于三角恋的歌，三个人的故事", emoji: "👤👤👤🔺", fillBlank: "我在___", answer: "中间", difficulty: "normal" },
+      { id: 41, title: "红豆", artist: "方大同", lyrics: "还没好好的感受，雪花绽放的气候", hint: "翻唱王菲经典，以一种豆子命名", emoji: "🫘❤️❄️", fillBlank: "雪花绽放的___", answer: "气候", difficulty: "normal" },
+      { id: 42, title: "特别的人", artist: "方大同", lyrics: "因为你是特别的人，所以特别狠心", hint: "因为特别所以伤得特别深", emoji: "⭐👤💔", fillBlank: "所以特别___", answer: "狠心", difficulty: "hard" },
+      { id: 43, title: "春风吹", artist: "方大同", lyrics: "春风吹又生，爱情犯了病", hint: "春天的风在吹，野火烧不尽", emoji: "🌸💨🌱", fillBlank: "爱情犯了___", answer: "病", difficulty: "normal" },
+      { id: 44, title: "如果爱", artist: "方大同", lyrics: "如果爱，请深爱", hint: "电视剧同名主题曲，假设性的爱", emoji: "❓❤️💯", fillBlank: "如果爱，请___爱", answer: "深", difficulty: "normal" },
+    ];
+    
+    const artistEmoji = {
+      "周杰伦": "🎹", "王力宏": "🎸", "陶喆": "🎷", "林俊杰": "🎤", "方大同": "🎺"
+    };
+    
+    const artistColors = {
+      "周杰伦": "#8b5cf6", "王力宏": "#f97316", "陶喆": "#14b8a6", "林俊杰": "#eab308", "方大同": "#ec4899"
+    };
+    
+    // ==================== 游戏状态 ====================
+    let gameState = {
+      mode: 'single',
+      selectedMode: null,
+      difficulty: 'normal',
+      questions: [],
+      currentQuestion: 0,
+      score: 0,
+      streak: 0,
+      maxStreak: 0,
+      totalTime: 0,
+      timeLeft: 15,
+      timer: null,
+      showingAnswer: false,
+      hintsUsed: 0,
+      showingHint: false,
+      answeredQuestions: [],
+      // 多人
+      currentPlayer: 1,
+      player1Name: '玩家1',
+      player2Name: '玩家2',
+      player1Score: 0,
+      player2Score: 0,
+      player1Answers: [],
+      player2Answers: [],
+    };
+    
+    let leaderboard = [];
+    
+    // ==================== 工具函数 ====================
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+    
+    function $(id) { return document.getElementById(id); }
+    
+    function showScreen(screenId) {
+      const screens = ['menu', 'difficultySelect', 'modeSelect', 'multiSetup', 'gameScreen', 'playerSwitch', 'resultScreen', 'leaderboardScreen'];
+      screens.forEach(id => {
+        $(id).classList.toggle('hidden', id !== screenId);
+      });
+    }
+    
+    function getDiffConfig() {
+      return gameState.difficulty === 'hard' 
+        ? { time: 8, options: 6 } 
+        : { time: 15, options: 4 };
+    }
+    
+    // ==================== 导航函数 ====================
+    function showMenu() {
+      clearInterval(gameState.timer);
+      showScreen('menu');
+    }
+    
+    function showDifficultySelect() {
+      showScreen('difficultySelect');
+    }
+    
+    function selectDifficulty(diff) {
+      gameState.difficulty = diff;
+      gameState.mode = 'single';
+      $('modeSubtitle').textContent = diff === 'hard' ? '😈 困难模式' : '😊 普通模式';
+      showScreen('modeSelect');
+    }
+    
+    function showMultiSetup() {
+      showScreen('multiSetup');
+    }
+    
+    function setMultiDifficulty(diff) {
+      gameState.difficulty = diff;
+      $('multiDiffNormal').classList.toggle('active', diff === 'normal');
+      $('multiDiffHard').classList.toggle('active', diff === 'hard');
+    }
+    
+    function showModeSelectMulti() {
+      gameState.mode = 'multi';
+      gameState.player1Name = $('player1Input').value || '玩家1';
+      gameState.player2Name = $('player2Input').value || '玩家2';
+      $('modeSubtitle').textContent = `👥 ${gameState.player1Name} VS ${gameState.player2Name}`;
+      showScreen('modeSelect');
+    }
+    
+    function goBackFromMode() {
+      showScreen(gameState.mode === 'multi' ? 'multiSetup' : 'difficultySelect');
+    }
+    
+    function showLeaderboard() {
+      renderLeaderboard();
+      showScreen('leaderboardScreen');
+    }
+    
+    // ==================== 游戏逻辑 ====================
+    function startGame(mode) {
+      gameState.selectedMode = mode;
+      gameState.questions = shuffleArray(songDatabase).slice(0, 10);
+      gameState.currentQuestion = 0;
+      gameState.score = 0;
+      gameState.streak = 0;
+      gameState.maxStreak = 0;
+      gameState.totalTime = 0;
+      gameState.hintsUsed = 0;
+      gameState.showingHint = false;
+      gameState.showingAnswer = false;
+      gameState.answeredQuestions = [];
+      gameState.currentPlayer = 1;
+      gameState.player1Score = 0;
+      gameState.player2Score = 0;
+      gameState.player1Answers = [];
+      gameState.player2Answers = [];
+      
+      showScreen('gameScreen');
+      setupGameUI();
+      loadQuestion();
+      startTimer();
+    }
+    
+    function setupGameUI() {
+      const isMulti = gameState.mode === 'multi';
+      const diffConfig = getDiffConfig();
+      
+      // 多人相关UI
+      $('multiScores').classList.toggle('hidden', !isMulti);
+      $('currentPlayerBadge').classList.toggle('hidden', !isMulti);
+      
+      if (isMulti) {
+        $('p1Score').textContent = `${gameState.player1Name}: 0`;
+        $('p2Score').textContent = `${gameState.player2Name}: 0`;
+      }
+      
+      // 模式标签
+      const modeNames = { LYRICS: '🎵 歌词猜歌', EMOJI: '😎 表情猜歌', HINT: '💡 线索猜歌', FILL: '✏️ 歌词填空' };
+      $('modeBadge').textContent = modeNames[gameState.selectedMode];
+      
+      // 提示按钮
+      $('hintBtn').classList.toggle('hidden', gameState.selectedMode === 'HINT' || gameState.selectedMode === 'FILL' || gameState.difficulty === 'hard');
+    }
+    
+    function loadQuestion() {
+      const song = gameState.questions[gameState.currentQuestion];
+      const diffConfig = getDiffConfig();
+      const isMulti = gameState.mode === 'multi';
+      
+      // 更新进度
+      $('questionNum').textContent = `${gameState.currentQuestion + 1}/10`;
+      $('progressFill').style.width = `${(gameState.currentQuestion / 10) * 100}%`;
+      
+      // 更新分数
+      if (isMulti) {
+        $('scoreDisplay').textContent = `⭐ ${gameState.currentPlayer === 1 ? gameState.player1Score : gameState.player2Score}`;
+        $('currentPlayerBadge').textContent = gameState.currentPlayer === 1 ? gameState.player1Name : gameState.player2Name;
+        $('currentPlayerBadge').className = `stat-badge ${gameState.currentPlayer === 1 ? 'player1' : 'player2'}`;
+        $('p1Score').textContent = `${gameState.player1Name}: ${gameState.player1Score}`;
+        $('p2Score').textContent = `${gameState.player2Name}: ${gameState.player2Score}`;
+        $('p1Score').classList.toggle('active', gameState.currentPlayer === 1);
+        $('p2Score').classList.toggle('active', gameState.currentPlayer === 2);
+      } else {
+        $('scoreDisplay').textContent = `⭐ ${gameState.score}`;
+      }
+      
+      // 连击
+      $('streakDisplay').classList.toggle('hidden', gameState.streak <= 1);
+      $('streakDisplay').textContent = `🔥 ${gameState.streak}连击`;
+      
+      // 题目内容
+      renderQuestion(song);
+      
+      // 生成选项
+      if (gameState.selectedMode !== 'FILL') {
+        renderOptions(song, diffConfig.options);
+      }
+      
+      // 重置状态
+      $('answerResult').classList.add('hidden');
+      $('nextBtn').classList.add('hidden');
+      $('hintText').classList.add('hidden');
+      $('hintBtn').disabled = false;
+      $('hintBtn').textContent = '💡 使用提示 (-25分)';
+      gameState.showingHint = false;
+      gameState.showingAnswer = false;
+    }
+    
+    function renderQuestion(song) {
+      const labels = { LYRICS: '根据歌词猜歌名', EMOJI: '根据表情猜歌名', HINT: '根据线索猜歌名', FILL: '填写缺失的歌词' };
+      $('questionLabel').textContent = labels[gameState.selectedMode];
+      
+      $('fillInputGroup').classList.add('hidden');
+      $('optionsGrid').classList.remove('hidden');
+      
+      switch (gameState.selectedMode) {
+        case 'LYRICS':
+          $('questionContent').innerHTML = `"${song.lyrics}"`;
+          $('questionContent').className = 'question-content';
+          break;
+        case 'EMOJI':
+          $('questionContent').innerHTML = song.emoji;
+          $('questionContent').className = 'question-content question-emoji';
+          break;
+        case 'HINT':
+          $('questionContent').innerHTML = `💡 ${song.hint}`;
+          $('questionContent').className = 'question-content';
+          break;
+        case 'FILL':
+          const parts = song.fillBlank.split('___');
+          $('questionContent').innerHTML = parts[0] + '<span style="border-bottom: 2px solid #fbbf24; padding: 0 20px; margin: 0 5px;">___</span>' + (parts[1] || '');
+          $('questionContent').className = 'question-content';
+          $('fillInputGroup').classList.remove('hidden');
+          $('optionsGrid').classList.add('hidden');
+          $('fillInput').value = '';
+          $('fillInput').focus();
+          break;
+      }
+    }
+    
+    function renderOptions(correctSong, optionCount) {
+      const otherSongs = songDatabase.filter(s => s.id !== correctSong.id);
+      const wrongOptions = shuffleArray(otherSongs).slice(0, optionCount - 1);
+      const allOptions = shuffleArray([correctSong, ...wrongOptions]);
+      
+      const grid = $('optionsGrid');
+      grid.className = optionCount === 6 ? 'options-grid six-options' : 'options-grid';
+      grid.innerHTML = allOptions.map(song => `
+        <button class="option-btn" data-id="${song.id}" onclick="selectOption(${song.id})">
+          <div class="option-title">${song.title}</div>
+          <div class="option-artist">${artistEmoji[song.artist]} ${song.artist}</div>
+        </button>
+      `).join('');
+    }
+    
+    function startTimer() {
+      clearInterval(gameState.timer);
+      const diffConfig = getDiffConfig();
+      gameState.timeLeft = diffConfig.time;
+      updateTimerDisplay();
+      
+      gameState.timer = setInterval(() => {
+        if (!gameState.showingAnswer) {
+          gameState.timeLeft--;
+          gameState.totalTime++;
+          updateTimerDisplay();
+          
+          if (gameState.timeLeft <= 0) {
+            handleTimeout();
+          }
+        }
+      }, 1000);
+    }
+    
+    function updateTimerDisplay() {
+      const display = $('timerDisplay');
+      display.textContent = `⏱️ ${gameState.timeLeft}s`;
+      display.classList.toggle('warning', gameState.timeLeft <= 5);
+    }
+    
+    function handleTimeout() {
+      showAnswer(false, true);
+    }
+    
+    function selectOption(songId) {
+      if (gameState.showingAnswer) return;
+      
+      const song = gameState.questions[gameState.currentQuestion];
+      const isCorrect = songId === song.id;
+      
+      // 更新按钮样式
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        const btnId = parseInt(btn.dataset.id);
+        if (btnId === song.id) {
+          btn.classList.add('correct');
+        } else if (btnId === songId && !isCorrect) {
+          btn.classList.add('wrong');
+        } else {
+          btn.classList.add('dimmed');
+        }
+      });
+      
+      showAnswer(isCorrect, false);
+    }
+    
+    function submitFillAnswer() {
+      if (gameState.showingAnswer) return;
+      
+      const song = gameState.questions[gameState.currentQuestion];
+      const userAnswer = $('fillInput').value.trim().toLowerCase();
+      const isCorrect = userAnswer === song.answer.toLowerCase();
+      
+      // 显示正确答案
+      const parts = song.fillBlank.split('___');
+      $('questionContent').innerHTML = parts[0] + `<span style="color: #fbbf24; font-weight: bold;">${song.answer}</span>` + (parts[1] || '');
+      
+      showAnswer(isCorrect, false);
+    }
+    
+    function showAnswer(isCorrect, isTimeout) {
+      gameState.showingAnswer = true;
+      const song = gameState.questions[gameState.currentQuestion];
+      const isMulti = gameState.mode === 'multi';
+      
+      // 记录答题
+      const result = { song, correct: isCorrect, timeout: isTimeout };
+      gameState.answeredQuestions.push(result);
+      
+      if (isMulti) {
+        if (gameState.currentPlayer === 1) {
+          gameState.player1Answers.push(result);
+        } else {
+          gameState.player2Answers.push(result);
+        }
+      }
+      
+      // 计算得分
+      if (isCorrect) {
+        const timeBonus = Math.floor(gameState.timeLeft * 2);
+        const streakBonus = gameState.streak * 10;
+        const hintPenalty = gameState.showingHint ? 25 : 0;
+        const diffBonus = gameState.difficulty === 'hard' ? 50 : 0;
+        const points = 100 + timeBonus + streakBonus - hintPenalty + diffBonus;
+        
+        if (isMulti) {
+          if (gameState.currentPlayer === 1) {
+            gameState.player1Score += points;
+          } else {
+            gameState.player2Score += points;
+          }
+        } else {
+          gameState.score += points;
+        }
+        
+        gameState.streak++;
+        gameState.maxStreak = Math.max(gameState.maxStreak, gameState.streak);
+      } else {
+        gameState.streak = 0;
+      }
+      
+      // 更新分数显示
+      if (isMulti) {
+        $('scoreDisplay').textContent = `⭐ ${gameState.currentPlayer === 1 ? gameState.player1Score : gameState.player2Score}`;
+        $('p1Score').textContent = `${gameState.player1Name}: ${gameState.player1Score}`;
+        $('p2Score').textContent = `${gameState.player2Name}: ${gameState.player2Score}`;
+      } else {
+        $('scoreDisplay').textContent = `⭐ ${gameState.score}`;
+      }
+      
+      // 显示结果
+      const resultDiv = $('answerResult');
+      resultDiv.classList.remove('hidden');
+      resultDiv.className = `answer-result ${isCorrect ? 'correct' : 'wrong'}`;
+      
+      let resultText = isCorrect ? '🎉 回答正确！' : (isTimeout ? '⏰ 时间到！' : '😅 答错了~');
+      $('answerResultText').innerHTML = `<span style="font-size: 20px; margin-right: 8px;">${isCorrect ? '🎉' : '😅'}</span><span style="font-weight: bold;">${resultText}</span>`;
+      $('correctAnswerText').innerHTML = `正确答案：<span class="answer-song" style="background: ${artistColors[song.artist]}">${artistEmoji[song.artist]} ${song.artist} - ${song.title}</span>`;
+      
+      // 下一步按钮
+      const nextBtn = $('nextBtn');
+      nextBtn.classList.remove('hidden');
+      
+      if (isMulti) {
+        if (gameState.currentPlayer === 1) {
+          nextBtn.textContent = `换 ${gameState.player2Name} →`;
+        } else {
+          nextBtn.textContent = gameState.currentQuestion + 1 >= 10 ? '查看结果 📊' : '下一题 →';
+        }
+      } else {
+        nextBtn.textContent = gameState.currentQuestion + 1 >= 10 ? '查看结果 📊' : '下一题 →';
+      }
+      
+      // 禁用填空输入
+      $('fillInput').disabled = true;
+    }
+    
+    function useHint() {
+      if (gameState.showingHint || gameState.showingAnswer) return;
+      
+      const song = gameState.questions[gameState.currentQuestion];
+      gameState.showingHint = true;
+      gameState.hintsUsed++;
+      
+      $('hintBtn').disabled = true;
+      $('hintBtn').textContent = '💡 提示已显示';
+      $('hintText').classList.remove('hidden');
+      $('hintText').textContent = `💡 ${song.hint}`;
+    }
+    
+    function nextQuestion() {
+      const isMulti = gameState.mode === 'multi';
+      
+      if (isMulti) {
+        if (gameState.currentPlayer === 1) {
+          // 切换到玩家2
+          gameState.currentPlayer = 2;
+          gameState.streak = 0;
+          showPlayerSwitch();
+          return;
+        } else {
+          // 玩家2答完
+          if (gameState.currentQuestion + 1 >= 10) {
+            showResult();
+            return;
+          }
+          gameState.currentQuestion++;
+          gameState.currentPlayer = 1;
+          gameState.streak = 0;
+          showPlayerSwitch();
+          return;
+        }
+      } else {
+        // 单人模式
+        if (gameState.currentQuestion + 1 >= 10) {
+          showResult();
+          return;
+        }
+        gameState.currentQuestion++;
+      }
+      
+      $('fillInput').disabled = false;
+      loadQuestion();
+      startTimer();
+    }
+    
+    function showPlayerSwitch() {
+      clearInterval(gameState.timer);
+      
+      $('switchIcon').textContent = gameState.currentPlayer === 1 ? '🎮' : '🎯';
+      $('switchTitle').textContent = `轮到 ${gameState.currentPlayer === 1 ? gameState.player1Name : gameState.player2Name}`;
+      $('switchP1Name').textContent = gameState.player1Name;
+      $('switchP2Name').textContent = gameState.player2Name;
+      $('switchP1Score').textContent = gameState.player1Score;
+      $('switchP2Score').textContent = gameState.player2Score;
+      $('switchQuestionNum').textContent = `第 ${gameState.currentQuestion + 1}/10 题`;
+      
+      showScreen('playerSwitch');
+    }
+    
+    function continueGame() {
+      showScreen('gameScreen');
+      $('fillInput').disabled = false;
+      loadQuestion();
+      startTimer();
+    }
+    
+    // ==================== 结果页面 ====================
+    function showResult() {
+      clearInterval(gameState.timer);
+      
+      const isMulti = gameState.mode === 'multi';
+      
+      if (isMulti) {
+        showMultiResult();
+      } else {
+        showSingleResult();
+      }
+      
+      // 答题记录
+      renderAnswerHistory();
+      
+      showScreen('resultScreen');
+    }
+    
+    function showSingleResult() {
+      $('singleResult').classList.remove('hidden');
+      $('multiResult').classList.add('hidden');
+      $('leaderboardInput').classList.remove('hidden');
+      
+      const correctCount = gameState.answeredQuestions.filter(q => q.correct).length;
+      const accuracy = Math.round((correctCount / 10) * 100);
+      
+      // 排名
+      let rank = { title: "音乐小白", emoji: "🐣" };
+      if (accuracy >= 90) rank = { title: "猜歌之王", emoji: "👑" };
+      else if (accuracy >= 70) rank = { title: "音乐达人", emoji: "🎵" };
+      else if (accuracy >= 50) rank = { title: "歌曲爱好者", emoji: "🎧" };
+      
+      $('resultIcon').textContent = rank.emoji;
+      $('resultTitle').textContent = rank.title;
+      $('finalScore').textContent = gameState.score;
+      $('accuracy').textContent = `${accuracy}%`;
+      $('maxStreak').textContent = gameState.maxStreak;
+      $('totalTime').textContent = `${gameState.totalTime}s`;
+    }
+    
+    function showMultiResult() {
+      $('singleResult').classList.add('hidden');
+      $('multiResult').classList.remove('hidden');
+      
+      const p1Wins = gameState.player1Score > gameState.player2Score;
+      const p2Wins = gameState.player2Score > gameState.player1Score;
+      const tie = gameState.player1Score === gameState.player2Score;
+      
+      $('resultIcon').textContent = tie ? '🤝' : '🏆';
+      $('resultTitle').textContent = tie ? '平局！' : `${p1Wins ? gameState.player1Name : gameState.player2Name} 获胜！`;
+      
+      $('multiP1Name').textContent = gameState.player1Name;
+      $('multiP2Name').textContent = gameState.player2Name;
+      $('multiP1Score').textContent = gameState.player1Score;
+      $('multiP2Score').textContent = gameState.player2Score;
+      $('multiP1Correct').textContent = `${gameState.player1Answers.filter(a => a.correct).length}/${gameState.player1Answers.length} 正确`;
+      $('multiP2Correct').textContent = `${gameState.player2Answers.filter(a => a.correct).length}/${gameState.player2Answers.length} 正确`;
+      
+      $('multiP1Medal').textContent = p1Wins ? '🥇' : (tie ? '🤝' : '🥈');
+      $('multiP2Medal').textContent = p2Wins ? '🥇' : (tie ? '🤝' : '🥈');
+      
+      $('multiP1Card').classList.toggle('winner', p1Wins);
+      $('multiP2Card').classList.toggle('winner', p2Wins);
+    }
+    
+    function renderAnswerHistory() {
+      const list = $('historyList');
+      list.innerHTML = gameState.answeredQuestions.map(q => `
+        <div class="answer-history-item ${q.correct ? 'correct' : 'wrong'}">
+          <span>${q.correct ? '✓' : '✗'} <span class="song-info">${q.song.title}</span> <span class="artist">- ${q.song.artist}</span></span>
+        </div>
+      `).join('');
+    }
+    
+    function playAgain() {
+      startGame(gameState.selectedMode);
+    }
+    
+    function changeMode() {
+      showScreen('modeSelect');
+    }
+    
+    // ==================== 排行榜 ====================
+    function loadLeaderboard() {
+      try {
+        const saved = localStorage.getItem('musicGameLeaderboard');
+        if (saved) {
+          leaderboard = JSON.parse(saved);
+        }
+      } catch (e) {
+        console.log('Failed to load leaderboard');
+      }
+    }
+    
+    function saveLeaderboard() {
+      try {
+        localStorage.setItem('musicGameLeaderboard', JSON.stringify(leaderboard));
+      } catch (e) {
+        console.log('Failed to save leaderboard');
+      }
+    }
+    
+    function submitScore() {
+      const name = $('nameInput').value.trim();
+      if (!name) return;
+      
+      const entry = {
+        name,
+        score: gameState.score,
+        date: new Date().toLocaleDateString('zh-CN'),
+        id: Date.now()
+      };
+      
+      leaderboard.push(entry);
+      leaderboard.sort((a, b) => b.score - a.score);
+      leaderboard = leaderboard.slice(0, 20);
+      saveLeaderboard();
+      
+      $('leaderboardInput').classList.add('hidden');
+      $('nameInput').value = '';
+      
+      alert('🎉 分数已提交！');
+    }
+    
+    function renderLeaderboard() {
+      if (leaderboard.length === 0) {
+        $('leaderboardEmpty').classList.remove('hidden');
+        $('leaderboardList').classList.add('hidden');
+      } else {
+        $('leaderboardEmpty').classList.add('hidden');
+        $('leaderboardList').classList.remove('hidden');
+        
+        $('leaderboardItems').innerHTML = leaderboard.map((entry, index) => `
+          <div class="leaderboard-item ${index < 3 ? 'top3' : ''}">
+            <div class="rank">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}</div>
+            <div class="name">${entry.name}</div>
+            <div class="score">${entry.score}</div>
+            <div class="date">${entry.date}</div>
+          </div>
+        `).join('');
+      }
+    }
+    
+    // ==================== 初始化 ====================
+    // 填空模式回车提交
+    $('fillInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') submitFillAnswer();
+    });
+    
+    // 加载排行榜
+    loadLeaderboard();
+    
+    // 显示主菜单
+    showScreen('menu');
+  </script>
+</body>
+</html>
