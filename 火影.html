@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>火影忍者手游技能问答</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #ff6b35;
+            font-size: 28px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .score-item {
+            text-align: center;
+            color: #fff;
+        }
+
+        .score-item .label {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .score-item .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+
+        .difficulty-badge {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+            border-radius: 15px;
+            padding: 3px 12px;
+            font-size: 12px;
+            color: #ffd700;
+        }
+
+        .question-box {
+            background: rgba(255, 107, 53, 0.2);
+            border: 2px solid #ff6b35;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .question-number {
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        .timer {
+            color: #ff6b35;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .timer.warning {
+            color: #e74c3c;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .question-text {
+            color: #fff;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            background: rgba(255, 107, 53, 0.3);
+            border-color: #ff6b35;
+            transform: translateX(5px);
+        }
+
+        .option-btn.correct {
+            background: rgba(46, 204, 113, 0.5);
+            border-color: #2ecc71;
+        }
+
+        .option-btn.wrong {
+            background: rgba(231, 76, 60, 0.5);
+            border-color: #e74c3c;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .start-screen, .result-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .start-screen h2 {
+            color: #ff6b35;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .start-screen p {
+            color: #ccc;
+            margin-bottom: 25px;
+            line-height: 1.8;
+        }
+
+        /* 难度选择样式 */
+        .difficulty-section {
+            margin-bottom: 25px;
+        }
+
+        .difficulty-section h3 {
+            color: #ffd700;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .difficulty-btn {
+            flex: 1;
+            padding: 15px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-align: center;
+        }
+
+        .difficulty-btn.easy {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: rgba(46, 204, 113, 0.5);
+            color: #2ecc71;
+        }
+
+        .difficulty-btn.normal {
+            background: rgba(255, 193, 7, 0.2);
+            border-color: rgba(255, 193, 7, 0.5);
+            color: #ffc107;
+        }
+
+        .difficulty-btn.hard {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: rgba(231, 76, 60, 0.5);
+            color: #e74c3c;
+        }
+
+        .difficulty-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .difficulty-btn.selected.easy {
+            background: rgba(46, 204, 113, 0.5);
+            border-color: #2ecc71;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.5);
+        }
+
+        .difficulty-btn.selected.normal {
+            background: rgba(255, 193, 7, 0.5);
+            border-color: #ffc107;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+        }
+
+        .difficulty-btn.selected.hard {
+            background: rgba(231, 76, 60, 0.5);
+            border-color: #e74c3c;
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.5);
+        }
+
+        .difficulty-btn .diff-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .difficulty-btn .diff-desc {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .start-btn, .restart-btn {
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            border: none;
+            border-radius: 25px;
+            padding: 15px 50px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .start-btn:hover, .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6);
+        }
+
+        .result-screen h2 {
+            color: #ffd700;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .result-screen .final-score {
+            font-size: 60px;
+            color: #ff6b35;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .result-screen .comment {
+            color: #ccc;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .result-stats {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            color: #aaa;
+            font-size: 14px;
+            padding: 5px 0;
+        }
+
+        .stat-row span:last-child {
+            color: #fff;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #666;
+            font-size: 12px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .ninja-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🍥 火影忍者手游</h1>
+            <div class="subtitle">忍者技能问答挑战</div>
+        </div>
+
+        <!-- 开始界面 -->
+        <div id="startScreen" class="start-screen">
+            <div class="ninja-icon">🔥</div>
+            <h2>准备好了吗？</h2>
+            <p>测试你对火影忍者手游中<br>忍者技能的了解程度！</p>
+
+            <div class="difficulty-section">
+                <h3>选择难度</h3>
+                <div class="difficulty-options">
+                    <div class="difficulty-btn easy selected" onclick="selectDifficulty('easy', this)">
+                        <div class="diff-name">😊 简单</div>
+                        <div class="diff-desc">无时限<br>基础题目</div>
+                    </div>
+                    <div class="difficulty-btn normal" onclick="selectDifficulty('normal', this)">
+                        <div class="diff-name">😤 普通</div>
+                        <div class="diff-desc">15秒/题<br>进阶题目</div>
+                    </div>
+                    <div class="difficulty-btn hard" onclick="selectDifficulty('hard', this)">
+                        <div class="diff-name">🔥 困难</div>
+                        <div class="diff-desc">10秒/题<br>高难题目</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="start-btn" onclick="startGame()">开始挑战</button>
+        </div>
+
+        <!-- 游戏界面 -->
+        <div id="gameScreen" class="hidden">
+            <div class="score-board">
+                <div class="score-item">
+                    <div class="label">得分</div>
+                    <div class="value" id="score">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">难度</div>
+                    <div class="difficulty-badge" id="currentDifficulty">简单</div>
+                </div>
+                <div class="score-item">
+                    <div class="label">正确率</div>
+                    <div class="value" id="accuracy">0%</div>
+                </div>
+            </div>
+
+            <div class="question-box">
+                <div class="question-header">
+                    <div class="question-number" id="questionNumber">第 1 题 / 共 10 题</div>
+                    <div class="timer" id="timer">⏱️ --</div>
+                </div>
+                <div class="question-text" id="questionText">问题加载中...</div>
+            </div>
+
+            <div class="options" id="optionsContainer"></div>
+        </div>
+
+        <!-- 结果界面 -->
+        <div id="resultScreen" class="result-screen hidden">
+            <div class="ninja-icon">🎉</div>
+            <h2>挑战完成！</h2>
+            <div class="final-score" id="finalScore">0</div>
+            <div class="comment" id="resultComment">评价加载中...</div>
+            
+            <div class="result-stats">
+                <div class="stat-row">
+                    <span>难度</span>
+                    <span id="statDifficulty">简单</span>
+                </div>
+                <div class="stat-row">
+                    <span>正确题数</span>
+                    <span id="statCorrect">0 / 10</span>
+                </div>
+                <div class="stat-row">
+                    <span>正确率</span>
+                    <span id="statAccuracy">0%</span>
+                </div>
+                <div class="stat-row">
+                    <span>用时</span>
+                    <span id="statTime">0秒</span>
+                </div>
+            </div>
+
+            <button class="restart-btn" onclick="restartGame()">再来一次</button>
+        </div>
+
+        <div class="footer">
+            开发者：章俊杰
+        </div>
+    </div>
+
+    <script>
+        // 简单题目
+        const easyQuestions = [
+            {
+                question: "漩涡鸣人最常用的技能是什么？",
+                options: ["千鸟", "螺旋丸", "豪火球之术", "影子模仿术"],
+                answer: 1
+            },
+            {
+                question: "宇智波佐助属于哪个家族？",
+                options: ["日向一族", "漩涡一族", "宇智波一族", "千手一族"],
+                answer: 2
+            },
+            {
+                question: "卡卡西的称号是什么？",
+                options: ["黄色闪光", "拷贝忍者", "木叶白牙", "三忍"],
+                answer: 1
+            },
+            {
+                question: "鸣人体内封印的是哪只尾兽？",
+                options: ["一尾", "八尾", "九尾", "十尾"],
+                answer: 2
+            },
+            {
+                question: "我爱罗是哪个村子的忍者？",
+                options: ["木叶村", "砂隐村", "雾隐村", "云隐村"],
+                answer: 1
+            },
+            {
+                question: "木叶村的创始人之一是谁？",
+                options: ["大蛇丸", "自来也", "千手柱间", "纲手"],
+                answer: 2
+            },
+            {
+                question: "小樱的师傅是谁？",
+                options: ["卡卡西", "纲手", "自来也", "大蛇丸"],
+                answer: 1
+            },
+            {
+                question: "佐助的哥哥叫什么名字？",
+                options: ["带土", "鼬", "斑", "泉奈"],
+                answer: 1
+            },
+            {
+                question: "鸣人的爸爸是第几代火影？",
+                options: ["三代", "四代", "五代", "六代"],
+                answer: 1
+            },
+            {
+                question: "晓组织成员穿的斗篷是什么颜色？",
+                options: ["纯黑色", "黑底红云", "红色", "紫色"],
+                answer: 1
+            },
+            {
+                question: "日向雏田的瞳术叫什么？",
+                options: ["写轮眼", "白眼", "轮回眼", "转生眼"],
+                answer: 1
+            },
+            {
+                question: "自来也是木叶的什么称号忍者？",
+                options: ["影", "三忍之一", "暗部", "上忍"],
+                answer: 1
+            }
+        ];
+
+        // 普通题目
+        const normalQuestions = [
+            {
+                question: "漩涡鸣人的「螺旋丸」属于什么属性？",
+                options: ["风属性", "无属性", "雷属性", "火属性"],
+                answer: 1
+            },
+            {
+                question: "宇智波佐助的「千鸟」是什么属性的忍术？",
+                options: ["火属性", "风属性", "雷属性", "土属性"],
+                answer: 2
+            },
+            {
+                question: "卡卡西的写轮眼是从谁那里获得的？",
+                options: ["宇智波鼬", "宇智波带土", "宇智波斑", "宇智波佐助"],
+                answer: 1
+            },
+            {
+                question: "迪达拉的起爆粘土是什么属性？",
+                options: ["火属性", "雷属性", "土属性", "风属性"],
+                answer: 2
+            },
+            {
+                question: "日向雏田的「柔拳」主要攻击敌人的什么？",
+                options: ["肌肉", "骨骼", "查克拉经络", "内脏"],
+                answer: 2
+            },
+            {
+                question: "大蛇丸的通灵兽是什么？",
+                options: ["蛤蟆", "蛞蝓", "蛇", "鹰"],
+                answer: 2
+            },
+            {
+                question: "鸣人的仙人模式是在哪里修炼的？",
+                options: ["木叶村", "妙木山", "龙地洞", "湿骨林"],
+                answer: 1
+            },
+            {
+                question: "奈良鹿丸的影子模仿术属于什么类型？",
+                options: ["血继限界", "秘传忍术", "禁术", "通灵术"],
+                answer: 1
+            },
+            {
+                question: "手 的主要武器是什么？",
+                options: ["苦无", "巨型扇子", "傀儡", "长刀"],
+                answer: 1
+            },
+            {
+                question: "宇智波鼬加入晓组织前的身份是？",
+                options: ["上忍", "中忍", "暗部", "下忍"],
+                answer: 2
+            },
+            {
+                question: "四代火影波风水门的绰号是什么？",
+                options: ["木叶白牙", "黄色闪光", "拷贝忍者", "传说三忍"],
+                answer: 1
+            },
+            {
+                question: "佩恩使用的是什么瞳术？",
+                options: ["写轮眼", "白眼", "轮回眼", "净眼"],
+                answer: 2
+            }
+        ];
+
+        // 困难题目
+        const hardQuestions = [
+            {
+                question: "宇智波斑的「完全体须佐能乎」可以使用什么武器？",
+                options: ["十拳剑", "草薙剑", "完美须佐剑", "八咫镜"],
+                answer: 2
+            },
+            {
+                question: "六道仙人的本名是什么？",
+                options: ["大筒木辉夜", "大筒木羽衣", "大筒木因陀罗", "大筒木阿修罗"],
+                answer: 1
+            },
+            {
+                question: "宇智波鼬的「月读」最长可以让对手体验多长时间的幻觉？",
+                options: ["24小时", "72小时", "7天", "无限"],
+                answer: 1
+            },
+            {
+                question: "秽土转生之术最多可以召唤多少人？",
+                options: ["取决于查克拉", "100人", "无限制", "取决于活祭品数量"],
+                answer: 2
+            },
+            {
+                question: "千手柱间的仙法「木遁·真数千手」又被称为？",
+                options: ["顶上化佛", "花树界降临", "木人术", "木龙之术"],
+                answer: 0
+            },
+            {
+                question: "宇智波带土开启神威需要消耗多少查克拉？",
+                options: ["极少", "中等", "大量", "几乎全部"],
+                answer: 2
+            },
+            {
+                question: "飞雷神之术是几代火影开发的？",
+                options: ["初代", "二代", "三代", "四代"],
+                answer: 1
+            },
+            {
+                question: "大筒木辉夜被封印需要几个人同时使用「六道·地爆天星」？",
+                options: ["1人", "2人", "3人", "4人"],
+                answer: 1
+            },
+            {
+                question: "八门遁甲的最后一门「死门」打开后会怎样？",
+                options: ["获得无限查克拉", "必死", "永久残疾", "失去忍术能力"],
+                answer: 1
+            },
+            {
+                question: "宇智波止水的「别天神」多久可以使用一次？",
+                options: ["无冷却", "1年", "10年", "一生一次"],
+                answer: 2
+            },
+            {
+                question: "角都一共有几颗心脏？",
+                options: ["3颗", "4颗", "5颗", "6颗"],
+                answer: 2
+            },
+            {
+                question: "晓组织的真正领袖是谁？",
+                options: ["佩恩", "宇智波带土", "大蛇丸", "绝"],
+                answer: 1
+            },
+            {
+                question: "尾兽玉的原理是将阳性查克拉和阴性查克拉按什么比例混合？",
+                options: ["1:1", "2:8", "8:2", "5:5"],
+                answer: 2
+            },
+            {
+                question: "转生眼需要什么条件才能开启？",
+                options: ["白眼进化", "大筒木血统+白眼", "日向与宇智波血统融合", "六道仙人查克拉"],
+                answer: 1
+            }
+        ];
+
+        // 游戏状态
+        let currentQuestion = 0;
+        let score = 0;
+        let correctCount = 0;
+        let selectedQuestions = [];
+        let currentDifficulty = 'easy';
+        let timer = null;
+        let timeLeft = 0;
+        let totalTime = 0;
+        let gameStartTime = 0;
+
+        // 难度配置
+        const difficultyConfig = {
+            easy: {
+                name: '简单',
+                questions: easyQuestions,
+                timeLimit: 0, // 0表示无时限
+                scorePerQuestion: 10,
+                timeBonus: 0
+            },
+            normal: {
+                name: '普通',
+                questions: normalQuestions,
+                timeLimit: 15,
+                scorePerQuestion: 15,
+                timeBonus: 1 // 每剩余1秒加1分
+            },
+            hard: {
+                name: '困难',
+                questions: hardQuestions,
+                timeLimit: 10,
+                scorePerQuestion: 20,
+                timeBonus: 2
+            }
+        };
+
+        function selectDifficulty(difficulty, element) {
+            currentDifficulty = difficulty;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        function selectRandomQuestions() {
+            const config = difficultyConfig[currentDifficulty];
+            const shuffled = [...config.questions].sort(() => Math.random() - 0.5);
+            selectedQuestions = shuffled.slice(0, 10);
+        }
+
+        function startGame() {
+            selectRandomQuestions();
+            currentQuestion = 0;
+            score = 0;
+            correctCount = 0;
+            gameStartTime = Date.now();
+
+            const config = difficultyConfig[currentDifficulty];
+            document.getElementById('currentDifficulty').textContent = config.name;
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+
+            showQuestion();
+        }
+
+        function startTimer() {
+            const config = difficultyConfig[currentDifficulty];
+            if (config.timeLimit === 0) {
+                document.getElementById('timer').textContent = '⏱️ 无限';
+                return;
+            }
+
+            timeLeft = config.timeLimit;
+            updateTimerDisplay();
+
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timeUp();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerEl = document.getElementById('timer');
+            timerEl.textContent = `⏱️ ${timeLeft}秒`;
+
+            if (timeLeft <= 5) {
+                timerEl.classList.add('warning');
+            } else {
+                timerEl.classList.remove('warning');
+            }
+        }
+
+        function stopTimer() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }
+
+        function timeUp() {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            const q = selectedQuestions[currentQuestion];
+            buttons[q.answer].classList.add('correct');
+
+            setTimeout(() => {
+                nextQuestion();
+            }, 1000);
+        }
+
+        function showQuestion() {
+            stopTimer();
+
+            const q = selectedQuestions[currentQuestion];
+            document.getElementById('questionNumber').textContent = `第 ${currentQuestion + 1} 题 / 共 10 题`;
+            document.getElementById('questionText').textContent = q.question;
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
+                btn.onclick = () => selectAnswer(index, btn);
+                container.appendChild(btn);
+            });
+
+            updateScore();
+            startTimer();
+        }
+
+        function selectAnswer(index, btn) {
+            stopTimer();
+
+            const q = selectedQuestions[currentQuestion];
+            const config = difficultyConfig[currentDifficulty];
+            const buttons = document.querySelectorAll('.option-btn');
+
+            buttons.forEach(b => b.disabled = true);
+
+            if (index === q.answer) {
+                btn.classList.add('correct');
+                correctCount++;
+
+                // 基础分 + 时间奖励
+                let questionScore = config.scorePerQuestion;
+                if (config.timeLimit > 0 && timeLeft > 0) {
+                    questionScore += timeLeft * config.timeBonus;
+                }
+                score += questionScore;
+            } else {
+                btn.classList.add('wrong');
+                buttons[q.answer].classList.add('correct');
+            }
+
+            updateScore();
+
+            setTimeout(() => {
+                nextQuestion();
+            }, 1000);
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < 10) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+            const acc = currentQuestion > 0 ? Math.round((correctCount / currentQuestion) * 100) : 0;
+            document.getElementById('accuracy').textContent = acc + '%';
+        }
+
+        function showResult() {
+            stopTimer();
+
+            const totalGameTime = Math.round((Date.now() - gameStartTime) / 1000);
+            const config = difficultyConfig[currentDifficulty];
+            const accuracy = Math.round((correctCount / 10) * 100);
+
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = score + '分';
+
+            // 统计信息
+            document.getElementById('statDifficulty').textContent = config.name;
+            document.getElementById('statCorrect').textContent = `${correctCount} / 10`;
+            document.getElementById('statAccuracy').textContent = accuracy + '%';
+            document.getElementById('statTime').textContent = formatTime(totalGameTime);
+
+            // 评价
+            let comment = '';
+            if (currentDifficulty === 'hard') {
+                if (accuracy >= 90) comment = '🏆 传说级火影！你是真正的忍者大师！';
+                else if (accuracy >= 70) comment = '🔥 影级实力！对火影了如指掌！';
+                else if (accuracy >= 50) comment = '⚡ 上忍水平！还需继续修炼！';
+                else comment = '💪 困难模式确实很难，再接再厉！';
+            } else if (currentDifficulty === 'normal') {
+                if (accuracy >= 90) comment = '🏆 太厉害了！你是火影专家！';
+                else if (accuracy >= 70) comment = '🔥 很不错！对火影很了解！';
+                else if (accuracy >= 50) comment = '👍 还可以，继续加油！';
+                else comment = '😊 多玩玩游戏，下次会更好！';
+            } else {
+                if (accuracy >= 90) comment = '🏆 完美！试试更高难度吧！';
+                else if (accuracy >= 70) comment = '🔥 不错哦！可以挑战普通难度了！';
+                else if (accuracy >= 50) comment = '👍 还行，继续努力！';
+                else comment = '😊 再接再厉，你可以的！';
+            }
+            document.getElementById('resultComment').textContent = comment;
+        }
+
+        function formatTime(seconds) {
+            if (seconds < 60) {
+                return seconds + '秒';
+            }
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            return `${min}分${sec}秒`;
+        }
+
+        function restartGame() {
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
